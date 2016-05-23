@@ -1,0 +1,27 @@
+int readPosition(){
+  static int old_pos = 0;
+  int current_pos;
+  int left_sensorState = left_lineFinder.readSensors();
+  int right_sensorState = right_lineFinder.readSensors();
+  if(left_sensorState == S1_OUT_S2_OUT && right_sensorState == S1_OUT_S2_OUT && old_pos <0) current_pos = -3;
+  if(left_sensorState == S1_IN_S2_OUT && right_sensorState == S1_OUT_S2_OUT) current_pos =  -2;
+  if(left_sensorState == S1_IN_S2_IN && right_sensorState == S1_OUT_S2_OUT) current_pos = -1;
+  if(left_sensorState == S1_OUT_S2_IN && right_sensorState == S1_IN_S2_OUT) current_pos = 0;
+  if(left_sensorState == S1_OUT_S2_OUT && right_sensorState == S1_IN_S2_IN) current_pos = 1;
+  if(left_sensorState == S1_OUT_S2_OUT && right_sensorState == S1_OUT_S2_IN) current_pos = 2;
+  if(left_sensorState == S1_OUT_S2_OUT && right_sensorState == S1_OUT_S2_OUT && old_pos >0) current_pos = 3;
+
+  // impossible position => return the old position
+  if(left_sensorState == S1_OUT_S2_OUT && right_sensorState == S1_IN_S2_OUT) current_pos =  old_pos;
+  if(left_sensorState == S1_OUT_S2_IN && right_sensorState == S1_OUT_S2_OUT) current_pos =  old_pos;
+  if(left_sensorState == S1_OUT_S2_IN && right_sensorState == S1_OUT_S2_IN) current_pos =  old_pos;
+  if(left_sensorState == S1_OUT_S2_IN && right_sensorState == S1_IN_S2_IN) current_pos =  old_pos;  // posible but solving later
+  if(left_sensorState == S1_IN_S2_OUT && right_sensorState == S1_OUT_S2_IN) current_pos =  old_pos;
+  if(left_sensorState == S1_IN_S2_OUT && right_sensorState == S1_IN_S2_OUT) current_pos =  old_pos;
+  if(left_sensorState == S1_IN_S2_OUT && right_sensorState == S1_IN_S2_IN) current_pos =  old_pos;
+  if(left_sensorState == S1_IN_S2_IN && right_sensorState == S1_OUT_S2_IN) current_pos =  old_pos;
+  if(left_sensorState == S1_IN_S2_IN && right_sensorState == S1_IN_S2_OUT) current_pos =  old_pos;  // posible but solving later
+  if(left_sensorState == S1_IN_S2_IN && right_sensorState == S1_IN_S2_IN) current_pos =  old_pos;   // posible but solving later
+  old_pos = current_pos;
+  return current_pos;
+}
