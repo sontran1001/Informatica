@@ -1,7 +1,7 @@
 #include "pidcontroller.h"
 //#include "clockwork.h"
 
-pidController::pidController(float *input, float *output, float *setpoint, float ki, float kp, float kd, float T)
+pidController::pidController(float input, float output, float setpoint, float kp, float ki, float kd, float T)
 {
        setInput( input );
        setOutput( output );
@@ -14,34 +14,34 @@ pidController::pidController(float *input, float *output, float *setpoint, float
        setTime(T);
 }
 
-void pidController::setInput ( float *input )
+void pidController::setInput ( float input )
 {
        Input         =      input;
 }
 
 float pidController::getInput ()
 {
- return *Input;
+ return Input;
 }
 
-void pidController::setOutput ( float *output )
+void pidController::setOutput ( float output )
 {
        Output        =      output;
 }
 
 float pidController::getOutput ()
 {
- return *Output;
+ return Output;
 }
 
-void pidController::setSetpoint ( float *setpoint )
+void pidController::setSetpoint ( float setpoint )
 {
        Setpoint      =    setpoint;
 }
 
 float pidController::getSetpoint ()
 {
- return *Setpoint;
+ return Setpoint;
 }
 
 void pidController::setKp ( float kp )
@@ -115,15 +115,14 @@ float pidController::pidCompute()
 {
   float error;
   float lastError; 
-  float *output;
-  //float errs;
+  float output;
   error = getSetpoint() - getInput();
   errorSum += error;
   lastError = error - getLastError();
-  *output = (getKp())*error + (getKd())*lastError*1/(getTime()); //+ (getKi())*getErrorSum()*getTime() ; 
+  output = (getKp())*error + (getKd())*lastError*(1.00)/(getTime()) + (getKi())*getErrorSum()*getTime(); 
   setOutput(output);
   setLastError(error); 
-  return *output;
+  return output;
 }
 
 void pidController::setRightMotorSpeed (int rightmotorspeed)
@@ -152,12 +151,12 @@ void pidController::pidControl( int RightBaseSpeed, int LeftBaseSpeed, int Min, 
        int rsp;
        int lsp;
        
-       rsp = RightBaseSpeed + int (pidCompute());
+       rsp = RightBaseSpeed - int (pidCompute());
        if( rsp > Max) rsp = Max;
        if( rsp < Min) rsp = Min;
        setRightMotorSpeed(rsp);
        
-       lsp = LeftBaseSpeed  - int (pidCompute());
+       lsp = LeftBaseSpeed  + int (pidCompute());
        if( lsp > Max) lsp = Max;
        if( lsp < Min) lsp = Min;
        setLeftMotorSpeed(lsp);
